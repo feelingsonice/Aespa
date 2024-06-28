@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import AVFoundation
+import UIKit
 
 /// `AespaPhotoContext` is an open class that provides a context for photo capturing operations.
 /// It has methods and properties to handle the photo capturing and settings.
@@ -127,15 +128,18 @@ private extension AespaPhotoContext {
             throw AespaError.file(reason: .unableToFlatten)
         }
         
+        // NEVER USED!
         if option.asset.synchronizeWithLocalAlbum {
             // Register to album
             try await albumManager.addToAlbum(imageData: rawPhotoData)
         }
         
-        let photoFile = PhotoFileGenerator.generate(
-            data: rawPhotoData,
-            date: Date())
-        
+//        let photoFile = PhotoFileGenerator.generate(
+//            data: rawPhotoData,
+//            date: Date())
+        let photoFile = PhotoFile(
+            creationDate: Date(), image: UIImage(data: rawPhotoData)!
+        )
         photoFileBufferSubject.send(.success(photoFile))
         return photoFile
     }
