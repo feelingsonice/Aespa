@@ -11,10 +11,14 @@ import AVFoundation
 struct CapturePhotoProcessor: AespaCapturePhotoOutputProcessing {
     let setting: AVCapturePhotoSettings
     let delegate: AVCapturePhotoCaptureDelegate
+    let isVideoMirrored: Bool
     let autoVideoOrientationEnabled: Bool
 
     func process<T>(_ output: T) throws where T: AespaPhotoOutputRepresentable {
-        guard let connection = output.getConnection(with: .video) else {
+        guard let connection = output.getConnection(
+            with: .video, 
+            isVideoMirrored: isVideoMirrored
+        ) else {
             throw AespaError.session(reason: .cannotFindConnection)
         }
         

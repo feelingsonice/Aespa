@@ -291,6 +291,7 @@ public protocol PhotoContext {
     ///     closure takes a `Result` type where `Success` contains a `PhotoFile` object and
     ///     `Failure` contains an `Error` object. By default, the closure does nothing.
     func capturePhoto(
+        isVideoMirrored: Bool,
         autoVideoOrientationEnabled: Bool,
         _ completionHandler: @escaping (Result<PhotoFile, Error>) -> Void
     )

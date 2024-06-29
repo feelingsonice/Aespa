@@ -324,11 +324,15 @@ extension AespaSession: PhotoContext {
     }
 
     public func capturePhoto(
+        isVideoMirrored: Bool,
         autoVideoOrientationEnabled: Bool = false,
         _ completionHandler: @escaping (Result<PhotoFile, Error>) -> Void = { _ in }
     ) {
-        photoContext.capturePhoto(autoVideoOrientationEnabled: autoVideoOrientationEnabled, completionHandler)
-
+        photoContext.capturePhoto(
+            isVideoMirrored: isVideoMirrored,
+            autoVideoOrientationEnabled: autoVideoOrientationEnabled,
+            completionHandler
+        )
     }
     
     public func fetchPhotoFiles(limit: Int = 0) async -> [PhotoAsset] {

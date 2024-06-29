@@ -69,12 +69,16 @@ extension AespaPhotoContext: PhotoContext {
     }
     
     public func capturePhoto(
+        isVideoMirrored: Bool,
         autoVideoOrientationEnabled: Bool = false,
         _ completionHandler: @escaping (Result<PhotoFile, Error>) -> Void
     ) {
         Task(priority: .utility) {
             do {
-                let photoFile = try await self.capturePhotoWithError(autoVideoOrientationEnabled: autoVideoOrientationEnabled)
+                let photoFile = try await self.capturePhotoWithError(
+                    isVideoMirrored: isVideoMirrored,
+                    autoVideoOrientationEnabled: autoVideoOrientationEnabled
+                )
                 completionHandler(.success(photoFile))
             } catch let error {
                 Logger.log(error: error)
@@ -120,9 +124,13 @@ extension AespaPhotoContext: PhotoContext {
 }
 
 private extension AespaPhotoContext {
-    func capturePhotoWithError(autoVideoOrientationEnabled: Bool) async throws -> PhotoFile {
+    func capturePhotoWithError(isVideoMirrored: Bool, autoVideoOrientationEnabled: Bool) async throws -> PhotoFile {
         let setting = AVCapturePhotoSettings(from: photoSetting)
-        let capturePhoto = try await camera.capture(setting: setting, autoVideoOrientationEnabled: autoVideoOrientationEnabled)
+        let capturePhoto = try await camera.capture(
+            setting: setting,
+            isVideoMirrored: isVideoMirrored,
+            autoVideoOrientationEnabled: autoVideoOrientationEnabled
+        )
         
         guard let rawPhotoData = capturePhoto.fileDataRepresentation() else {
             throw AespaError.file(reason: .unableToFlatten)

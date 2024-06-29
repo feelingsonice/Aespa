@@ -10,11 +10,16 @@ import AVFoundation
 
 protocol AespaPhotoOutputRepresentable {
     func capturePhoto(with: AVCapturePhotoSettings, delegate: AVCapturePhotoCaptureDelegate)
-    func getConnection(with mediaType: AVMediaType) -> AespaCaptureConnectionRepresentable?
+    func getConnection(with mediaType: AVMediaType, isVideoMirrored: Bool) -> AespaCaptureConnectionRepresentable?
 }
 
 extension AVCapturePhotoOutput: AespaPhotoOutputRepresentable {
-    func getConnection(with mediaType: AVMediaType) -> AespaCaptureConnectionRepresentable? {
-        return connection(with: mediaType)
+    func getConnection(with mediaType: AVMediaType, isVideoMirrored: Bool) -> AespaCaptureConnectionRepresentable? {
+        guard let conn = connection(with: mediaType) else {
+            return nil
+        }
+        
+        conn.isVideoMirrored = isVideoMirrored
+        return conn
     }
 }

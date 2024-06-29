@@ -32,9 +32,15 @@ class AespaCoreCamera: NSObject {
 extension AespaCoreCamera {
     func capture(
         setting: AVCapturePhotoSettings,
+        isVideoMirrored: Bool,
         autoVideoOrientationEnabled: Bool
     ) async throws -> AVCapturePhoto {
-        let processor = CapturePhotoProcessor(setting: setting, delegate: self, autoVideoOrientationEnabled: autoVideoOrientationEnabled)
+        let processor = CapturePhotoProcessor(
+            setting: setting, 
+            delegate: self, 
+            isVideoMirrored: isVideoMirrored,
+            autoVideoOrientationEnabled: autoVideoOrientationEnabled
+        )
         try run(processor: processor)
 
         return try await withCheckedThrowingContinuation { continuation in
