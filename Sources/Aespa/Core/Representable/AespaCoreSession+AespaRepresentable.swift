@@ -179,6 +179,7 @@ extension AespaCoreSession: AespaCoreSessionRepresentable {
         }
 
         let photoOutput = AVCapturePhotoOutput()
+        photoOutput.maxPhotoQualityPrioritization = .quality
         guard self.canAddOutput(photoOutput) else {
             throw AespaError.device(reason: .unableToSetOutput)
         }
