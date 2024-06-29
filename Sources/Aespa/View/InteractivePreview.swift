@@ -97,21 +97,10 @@ public struct InteractivePreview: View {
     
     public var body: some View {
         GeometryReader { geometry in
-            ZStack {
-                preview
-                    .gesture(changePositionGesture)
+            preview
+                .gesture(changePositionGesture)
 //                    .gesture(tapToFocusGesture(geometry)) // Currently disabled
-                    .gesture(pinchZoomGesture)
-                
-                // Crosshair
-                Rectangle()
-                    .stroke(lineWidth: 1)
-                    .foregroundColor(Color.yellow)
-                    .frame(width: 100, height: 100)
-                    .position(focusingLocation)
-                    .opacity(focusFrameOpacity)
-                    .animation(.spring(), value: focusFrameOpacity)
-            }
+                .gesture(pinchZoomGesture)
             .onChange(of: geometry.size) { newSize in
                 DispatchQueue.main.async {
                     layer.frame = CGRect(origin: .zero, size: newSize)
@@ -130,6 +119,10 @@ private extension InteractivePreview {
     }
     
     func tapToFocusGesture(_ geometry: GeometryProxy) -> some Gesture {
+        guard session.isRunning, option.enableFocus else {
+            return DragGesture(minimumDistance: 0).onEnded { _ in }
+        }
+        
         return DragGesture(minimumDistance: 0)
             .onEnded { value in
                 guard
