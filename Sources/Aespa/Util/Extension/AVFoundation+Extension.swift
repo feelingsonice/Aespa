@@ -11,8 +11,6 @@ extension AVCaptureDevice.Position {
     var chooseBestCamera: AVCaptureDevice? {
         AVCaptureDevice.DiscoverySession(
             deviceTypes: [
-                .builtInTripleCamera,
-                .builtInDualWideCamera,
                 .builtInDualCamera,
                 .builtInWideAngleCamera
             ],
