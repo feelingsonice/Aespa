@@ -123,10 +123,6 @@ public struct InteractivePreview: View {
 
 private extension InteractivePreview {
     var changePositionGesture: some Gesture {
-        guard session.isRunning, option.enableChangePosition else {
-            return TapGesture(count: 2).onEnded {}
-        }
-        
         return TapGesture(count: 2).onEnded {
             let nextPosition: AVCaptureDevice.Position = (currentCameraPosition == .back) ? .front : .back
             session.common(.position(position: nextPosition))
@@ -134,10 +130,6 @@ private extension InteractivePreview {
     }
     
     func tapToFocusGesture(_ geometry: GeometryProxy) -> some Gesture {
-        guard session.isRunning, option.enableFocus else {
-            return DragGesture(minimumDistance: 0).onEnded { _ in }
-        }
-        
         return DragGesture(minimumDistance: 0)
             .onEnded { value in
                 guard
@@ -163,10 +155,6 @@ private extension InteractivePreview {
     }
     
     var pinchZoomGesture: some Gesture {
-        guard session.isRunning, option.enableZoom else {
-            return MagnificationGesture().onChanged { _ in } .onEnded { _ in }
-        }
-        
         let maxZoomFactor = session.maxZoomFactor ?? 1.0
         return MagnificationGesture()
             .onChanged { (scale) in
