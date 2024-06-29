@@ -14,7 +14,7 @@ import UIKit
 /// It has methods and properties to handle the photo capturing and settings.
 open class AespaPhotoContext {
     private let coreSession: AespaCoreSession
-    private let albumManager: AespaCoreAlbumManager
+//    private let albumManager: AespaCoreAlbumManager
     private let option: AespaOption
     
     private let camera: AespaCoreCamera
@@ -25,27 +25,27 @@ open class AespaPhotoContext {
     init(
         coreSession: AespaCoreSession,
         camera: AespaCoreCamera,
-        albumManager: AespaCoreAlbumManager,
+//        albumManager: AespaCoreAlbumManager,
         option: AespaOption
     ) {
         self.coreSession = coreSession
         self.camera = camera
-        self.albumManager = albumManager
+//        self.albumManager = albumManager
         self.option = option
         
         self.photoSetting = AVCapturePhotoSettings()
         self.photoFileBufferSubject = .init(nil)
         
         // Add first video file to buffer if it exists
-        if option.asset.synchronizeWithLocalAlbum {
-            Task(priority: .utility) {
-                guard let firstPhotoAsset = await albumManager.fetchPhotoFile(limit: 1).first else {
-                    return
-                }
-                
-                photoFileBufferSubject.send(.success(firstPhotoAsset.toPhotoFile))
-            }
-        }
+//        if option.asset.synchronizeWithLocalAlbum {
+//            Task(priority: .utility) {
+//                guard let firstPhotoAsset = await albumManager.fetchPhotoFile(limit: 1).first else {
+//                    return
+//                }
+//                
+//                photoFileBufferSubject.send(.success(firstPhotoAsset.toPhotoFile))
+//            }
+//        }
     }
 }
 
@@ -119,7 +119,8 @@ extension AespaPhotoContext: PhotoContext {
             return []
         }
         
-        return await albumManager.fetchPhotoFile(limit: limit)
+        return []
+//        return await albumManager.fetchPhotoFile(limit: limit)
     }
 }
 
@@ -137,10 +138,10 @@ private extension AespaPhotoContext {
         }
         
         // NEVER USED!
-        if option.asset.synchronizeWithLocalAlbum {
-            // Register to album
-            try await albumManager.addToAlbum(imageData: rawPhotoData)
-        }
+//        if option.asset.synchronizeWithLocalAlbum {
+//            // Register to album
+//            try await albumManager.addToAlbum(imageData: rawPhotoData)
+//        }
         
 //        let photoFile = PhotoFileGenerator.generate(
 //            data: rawPhotoData,

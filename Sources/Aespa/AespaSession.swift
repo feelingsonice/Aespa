@@ -22,10 +22,10 @@ import AVFoundation
 open class AespaSession {
     let option: AespaOption
     let coreSession: AespaCoreSession
-    private let albumManager: AespaCoreAlbumManager
-    private let eventManager: AespaEventManager
+//    private let albumManager: AespaCoreAlbumManager
+//    private let eventManager: AespaEventManager
     
-    private let recorder: AespaCoreRecorder
+//    private let recorder: AespaCoreRecorder
     private let camera: AespaCoreCamera
 
     private let previewLayerSubject: CurrentValueSubject<AVCaptureVideoPreviewLayer?, Never>
@@ -42,34 +42,35 @@ open class AespaSession {
     
     convenience init(option: AespaOption) {
         let session = AespaCoreSession(option: option)
-        let eventManager = AespaEventManager()
+//        let eventManager = AespaEventManager()
 
         self.init(
             option: option,
             session: session,
-            recorder: .init(core: session),
-            camera: .init(core: session),
-            albumManager: .init(
-                albumName: option.asset.albumName,
-                videoAssetEventSubject: eventManager.videoAssetEventPublihser,
-                photoAssetEventSubject: eventManager.photoAssetEventPublihser),
-            eventManager: eventManager)
+//            recorder: .init(core: session),
+            camera: .init(core: session)
+//            albumManager: .init(
+//                albumName: option.asset.albumName,
+//                videoAssetEventSubject: eventManager.videoAssetEventPublihser,
+//                photoAssetEventSubject: eventManager.photoAssetEventPublihser),
+//            eventManager: eventManager
+        )
     }
 
     init(
         option: AespaOption,
         session: AespaCoreSession,
-        recorder: AespaCoreRecorder,
-        camera: AespaCoreCamera,
-        albumManager: AespaCoreAlbumManager,
-        eventManager: AespaEventManager
+//        recorder: AespaCoreRecorder,
+        camera: AespaCoreCamera
+//        albumManager: AespaCoreAlbumManager,
+//        eventManager: AespaEventManager
     ) {
         self.option = option
         self.coreSession = session
-        self.recorder = recorder
+//        self.recorder = recorder
         self.camera = camera
-        self.albumManager = albumManager
-        self.eventManager = eventManager
+//        self.albumManager = albumManager
+//        self.eventManager = eventManager
         
         self.previewLayerSubject = .init(nil)
         
@@ -83,15 +84,15 @@ open class AespaSession {
         self.photoContext = AespaPhotoContext(
             coreSession: coreSession,
             camera: camera,
-            albumManager: albumManager,
+//            albumManager: albumManager,
             option: option)
         
-        self.videoContext = AespaVideoContext(
-            commonContext: self,
-            coreSession: coreSession,
-            recorder: recorder,
-            albumManager: albumManager,
-            option: option)
+//        self.videoContext = AespaVideoContext(
+//            commonContext: self,
+//            coreSession: coreSession,
+//            recorder: recorder,
+//            albumManager: albumManager,
+//            option: option)
     }
 
     // MARK: - Public variables
@@ -141,16 +142,16 @@ open class AespaSession {
     
     /// Publishes events related to video assets,
     /// allowing subscribers to react to delete or add event in video assets.
-    public var videoAssetEventPublisher: AnyPublisher<AssetEvent, Never> {
-        eventManager.videoAssetEventPublihser.eraseToAnyPublisher()
-    }
-    
+//    public var videoAssetEventPublisher: AnyPublisher<AssetEvent, Never> {
+//        eventManager.videoAssetEventPublihser.eraseToAnyPublisher()
+//    }
+//    
     
     /// Publishes events related to photo assets,
     /// allowing subscribers to react to delete or add event in photo assets.
-    public var photoAssetEventPublisher: AnyPublisher<AssetEvent, Never> {
-        eventManager.photoAssetEventPublihser.eraseToAnyPublisher()
-    }
+//    public var photoAssetEventPublisher: AnyPublisher<AssetEvent, Never> {
+//        eventManager.photoAssetEventPublihser.eraseToAnyPublisher()
+//    }
     
     /// This property indicates whether the camera device is set to monitor changes in the subject area.
     ///
