@@ -253,6 +253,10 @@ extension AespaSession: CommonContext {
         case .zoom(let factor):
             let tuner = ZoomTuner(zoomFactor: factor)
             coreSession.run(tuner, onComplete)
+        
+        case .smoothZoom(let factor, let rate):
+            let tuner = SmoothZoomTuner(zoomFactor: factor, zoomRate: rate)
+            coreSession.run(tuner, onComplete)
             
         case .changeMonitoring(let enabled):
             let tuner = ChangeMonitoringTuner(isSubjectAreaChangeMonitoringEnabled: enabled)

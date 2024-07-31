@@ -15,3 +15,14 @@ struct ZoomTuner: AespaDeviceTuning {
         device.zoomFactor(zoomFactor)
     }
 }
+
+
+struct SmoothZoomTuner: AespaDeviceTuning {
+    var needLock = true
+    var zoomFactor: CGFloat
+    var zoomRate: Float
+    
+    func tune<T: AespaCaptureDeviceRepresentable>(_ device: T) {
+        device.smoothZoomFactor(factor: zoomFactor, rate: zoomRate)
+    }
+}

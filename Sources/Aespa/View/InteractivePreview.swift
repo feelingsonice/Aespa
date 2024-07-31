@@ -99,8 +99,8 @@ public struct InteractivePreview: View {
         GeometryReader { geometry in
             preview
                 .gesture(changePositionGesture)
-//                    .gesture(tapToFocusGesture(geometry)) // Currently disabled
                 .gesture(pinchZoomGesture)
+//                .gesture(tapToFocusGesture(geometry)) // Currently disabled
             .onChange(of: geometry.size) { newSize in
                 DispatchQueue.main.async {
                     layer.frame = CGRect(origin: .zero, size: newSize)
@@ -153,14 +153,28 @@ private extension InteractivePreview {
                 .onChanged { [unowned session] (scale) in
                     let maxZoomFactor = session.maxZoomFactor ?? 1.0
                     let videoZoomFactor = scale.magnification
+//                    let rate = Float(scale.velocity)
+                    
                     if (videoZoomFactor <= maxZoomFactor) {
                         let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
+                        // Not working
+//                        session.common(.smoothZoom(factor: newZoomFactor, rate: rate))
                         session.common(.zoom(factor: newZoomFactor))
                     }
                 }
                 .onEnded { (scale) in
+//                    let videoZoomFactor = scale.magnification
+//                    previousZoomFactor = videoZoomFactor >= 1 ? videoZoomFactor : 1
+                    let maxZoomFactor = session.maxZoomFactor ?? 1.0
                     let videoZoomFactor = scale.magnification
-                    previousZoomFactor = videoZoomFactor >= 1 ? videoZoomFactor : 1
+//                    let rate = Float(scale.velocity)
+                    
+                    if (videoZoomFactor <= maxZoomFactor) {
+                        let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
+                        // Not working
+//                        session.common(.smoothZoom(factor: newZoomFactor, rate: rate))
+                        session.common(.zoom(factor: newZoomFactor))
+                    }
                 }
         } else {
             return MagnificationGesture(minimumScaleDelta: 0.01)

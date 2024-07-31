@@ -400,6 +400,9 @@ public enum CommonContextOption {
     ///
     /// - Parameters:
     ///   - factor: A `CGFloat` value indicating the zoom factor to be set.
+    ///   - rate: A `Float` value indicating the how fast to transition.
+    ///   
+    ///   https://developer.apple.com/documentation/avfoundation/avcapturedevice/1624614-ramp
     case smoothZoom(factor: CGFloat, rate: Float)
     
     /// Changes monitoring status.
