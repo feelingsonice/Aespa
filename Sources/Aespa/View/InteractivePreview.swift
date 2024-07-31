@@ -148,19 +148,35 @@ private extension InteractivePreview {
     }
     
     var pinchZoomGesture: some Gesture {
-        let maxZoomFactor = session.maxZoomFactor ?? 1.0
-        return MagnificationGesture()
-            .onChanged { (scale) in
-                let videoZoomFactor = scale * previousZoomFactor
-                if (videoZoomFactor <= maxZoomFactor) {
-                    let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
-                    session.common(.zoom(factor: newZoomFactor))
+        if #available(iOS 17.0, *) {
+            return MagnifyGesture(minimumScaleDelta: 0.01)
+                .onChanged { [unowned session] (scale) in
+                    let maxZoomFactor = session.maxZoomFactor ?? 1.0
+                    let videoZoomFactor = scale.magnification
+                    if (videoZoomFactor <= maxZoomFactor) {
+                        let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
+                        session.common(.zoom(factor: newZoomFactor))
+                    }
                 }
-            }
-            .onEnded { (scale) in
-                let videoZoomFactor = scale * previousZoomFactor
-                previousZoomFactor = videoZoomFactor >= 1 ? videoZoomFactor : 1
-            }
+                .onEnded { (scale) in
+                    let videoZoomFactor = scale.magnification
+                    previousZoomFactor = videoZoomFactor >= 1 ? videoZoomFactor : 1
+                }
+        } else {
+            return MagnificationGesture(minimumScaleDelta: 0.01)
+                .onChanged { [unowned session] (scale) in
+                    let maxZoomFactor = session.maxZoomFactor ?? 1.0
+                    let videoZoomFactor = scale * previousZoomFactor
+                    if (videoZoomFactor <= maxZoomFactor) {
+                        let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
+                        session.common(.zoom(factor: newZoomFactor))
+                    }
+                }
+                .onEnded { (scale) in
+                    let videoZoomFactor = scale * previousZoomFactor
+                    previousZoomFactor = videoZoomFactor >= 1 ? videoZoomFactor : 1
+                }
+        }
     }
     
     func resetFocusMode() {

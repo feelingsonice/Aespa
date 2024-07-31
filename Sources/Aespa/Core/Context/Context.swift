@@ -396,6 +396,12 @@ public enum CommonContextOption {
     ///   - factor: A `CGFloat` value indicating the zoom factor to be set.
     case zoom(factor: CGFloat)
     
+    /// Sets the zoom factor for the video recording session with smooth scaling
+    ///
+    /// - Parameters:
+    ///   - factor: A `CGFloat` value indicating the zoom factor to be set.
+    case smoothZoom(factor: CGFloat, rate: Float)
+    
     /// Changes monitoring status.
     ///
     /// - Parameters:
