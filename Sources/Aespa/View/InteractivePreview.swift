@@ -45,9 +45,26 @@ public struct InteractivePreviewOption {
     }
 }
 
+@available(iOS 17.0, *)
 public struct InteractivePreview: View {
+    public static let gestureState = GestureStateViewModel()
+    
+    @Observable
+    public class GestureStateViewModel {
+        public var isZooming: Bool = false
+        public var isDragging: Bool = false
+        
+        public func reset() {
+            isZooming = false
+            isDragging = false
+        }
+    }
+    
     private let option: InteractivePreviewOption
     private let preview: Preview
+    
+    // Used to control gesture states
+    @State var gestureStateViewModel = InteractivePreview.gestureState
 
     // Zoom
     @State private var previousZoomFactor: CGFloat = 1.0
@@ -98,8 +115,8 @@ public struct InteractivePreview: View {
     public var body: some View {
         GeometryReader { geometry in
             preview
-                .gesture(changePositionGesture)
-                .gesture(pinchZoomGesture)
+                .gesture(changePositionGesture, isEnabled: !gestureStateViewModel.isZooming && !gestureStateViewModel.isDragging)
+                .gesture(pinchZoomGesture, isEnabled: !gestureStateViewModel.isDragging)
 //                .gesture(tapToFocusGesture(geometry)) // Currently disabled
             .onChange(of: geometry.size) { newSize in
                 DispatchQueue.main.async {
@@ -107,9 +124,15 @@ public struct InteractivePreview: View {
                 }
             }
         }
+        .onDisappear {
+            gestureStateViewModel.reset()
+//                previousZoomFactor = 1.0
+//                session.common(.zoom(factor: 1.0))
+        }
     }
 }
 
+@available(iOS 17.0, *)
 private extension InteractivePreview {
     var changePositionGesture: some Gesture {
         return TapGesture(count: 2).onEnded {
@@ -151,34 +174,24 @@ private extension InteractivePreview {
         if #available(iOS 17.0, *) {
             return MagnifyGesture(minimumScaleDelta: 0.01)
                 .onChanged { [unowned session] (scale) in
+                    gestureStateViewModel.isZooming = true
                     let maxZoomFactor = session.maxZoomFactor ?? 1.0
                     let videoZoomFactor = scale.magnification
-//                    let rate = Float(scale.velocity)
-                    
-                    if (videoZoomFactor <= maxZoomFactor) {
-                        let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
-                        // Not working
-//                        session.common(.smoothZoom(factor: newZoomFactor, rate: rate))
-                        session.common(.zoom(factor: newZoomFactor))
-                    }
+                    let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
+                    session.common(.zoom(factor: newZoomFactor))
                 }
                 .onEnded { (scale) in
-//                    let videoZoomFactor = scale.magnification
-//                    previousZoomFactor = videoZoomFactor >= 1 ? videoZoomFactor : 1
+                    gestureStateViewModel.isZooming = false
                     let maxZoomFactor = session.maxZoomFactor ?? 1.0
                     let videoZoomFactor = scale.magnification
-//                    let rate = Float(scale.velocity)
-                    
-                    if (videoZoomFactor <= maxZoomFactor) {
-                        let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
-                        // Not working
-//                        session.common(.smoothZoom(factor: newZoomFactor, rate: rate))
-                        session.common(.zoom(factor: newZoomFactor))
-                    }
+                    let newZoomFactor = max(1.0, min(videoZoomFactor, maxZoomFactor))
+                    session.common(.zoom(factor: newZoomFactor))
                 }
         } else {
+            // Should not be used!
             return MagnificationGesture(minimumScaleDelta: 0.01)
                 .onChanged { [unowned session] (scale) in
+                    gestureStateViewModel.isZooming = true
                     let maxZoomFactor = session.maxZoomFactor ?? 1.0
                     let videoZoomFactor = scale * previousZoomFactor
                     if (videoZoomFactor <= maxZoomFactor) {
@@ -187,6 +200,7 @@ private extension InteractivePreview {
                     }
                 }
                 .onEnded { (scale) in
+                    gestureStateViewModel.isZooming = false
                     let videoZoomFactor = scale * previousZoomFactor
                     previousZoomFactor = videoZoomFactor >= 1 ? videoZoomFactor : 1
                 }

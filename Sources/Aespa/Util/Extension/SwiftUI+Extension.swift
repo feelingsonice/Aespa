@@ -32,6 +32,7 @@ public extension AespaSession {
     ///
     /// - Warning: Tap-to-focus works only in `autoFocus` mode.
     ///     Make sure you're using this mode for the feature to work.
+    @available(iOS 17.0, *)
     func interactivePreview(
         gravity: AVLayerVideoGravity = .resizeAspectFill,
         option: InteractivePreviewOption = .init()
